@@ -27,7 +27,7 @@ function createSnapshotIdentifier({
 }
 
 // eslint-disable-next-line no-unused-vars
-function toMatchPdfSnapshot(received) {
+function toMatchPdfSnapshot(received, options) {
   const {
     testPath, currentTestName, snapshotState, isNot,
   } = this;
@@ -45,11 +45,12 @@ function toMatchPdfSnapshot(received) {
   // eslint-disable-next-line no-underscore-dangle
   initializeOrIncrementTestCounter(snapshotState._counters, currentTestName);
 
-  const snapshotIdentifier = createSnapshotIdentifier({
-    testPath,
-    currentTestName,
-    snapshotState,
-  });
+  const snapshotIdentifier = options && options.snapshotIdentifier
+    ? options.snapshotIdentifier : createSnapshotIdentifier({
+      testPath,
+      currentTestName,
+      snapshotState,
+    });
   // eslint-disable-next-line no-underscore-dangle
   const updateSnapshot = snapshotState._updateSnapshot === 'all';
   // eslint-disable-next-line no-underscore-dangle
