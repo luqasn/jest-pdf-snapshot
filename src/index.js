@@ -27,7 +27,7 @@ function createSnapshotIdentifier({
 }
 
 // eslint-disable-next-line no-unused-vars
-function toMatchPdfSnapshot(received, options) {
+function toMatchPdfSnapshot(received, options = {}) {
   const {
     testPath, currentTestName, currentConcurrentTestName, snapshotState, isNot,
   } = this;
@@ -52,7 +52,7 @@ function toMatchPdfSnapshot(received, options) {
   // eslint-disable-next-line no-underscore-dangle
   initializeOrIncrementTestCounter(snapshotState._counters, testName);
 
-  const snapshotIdentifier = options && options.snapshotIdentifier
+  const snapshotIdentifier = options.snapshotIdentifier
     ? options.snapshotIdentifier : createSnapshotIdentifier({
       testPath,
       currentTestName: testName,
@@ -69,6 +69,7 @@ function toMatchPdfSnapshot(received, options) {
     snapshotIdentifier,
     updateSnapshot,
     addSnapshot,
+    onlyUpdateIfDifferent: options.onlyUpdateIfDifferent || false,
   });
 
   const {
