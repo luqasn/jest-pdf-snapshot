@@ -21,6 +21,7 @@ function diffPdfToSnapshot({
   snapshotIdentifier,
   updateSnapshot,
   addSnapshot,
+  onlyUpdateIfDifferent,
 }, {
   isSamePdf = defaultIsSamePdf,
   generateDiff = defaultGenerateDiff,
@@ -34,19 +35,8 @@ function diffPdfToSnapshot({
 
   const snapshotPath = path.join(snapshotDir, `${snapshotIdentifier}.pdf`);
 
-  if (updateSnapshot) {
-    const snapshotFd = fs.openSync(snapshotPath, 'w');
-    fs.writeSync(snapshotFd, pdfBuffer);
-
-    return {
-      pass: true,
-      updated: true,
-      added: false,
-    };
-  }
-
   if (!fs.existsSync(snapshotPath)) {
-    if (addSnapshot) {
+    if (addSnapshot || updateSnapshot) {
       const snapshotFd = fs.openSync(snapshotPath, 'w');
       fs.writeSync(snapshotFd, pdfBuffer);
 
@@ -60,6 +50,17 @@ function diffPdfToSnapshot({
     return {
       pass: false,
       failureType: 'EmptySnapshot',
+    };
+  }
+
+  if (updateSnapshot && !onlyUpdateIfDifferent) {
+    const snapshotFd = fs.openSync(snapshotPath, 'w');
+    fs.writeSync(snapshotFd, pdfBuffer);
+
+    return {
+      pass: true,
+      updated: true,
+      added: false,
     };
   }
 
@@ -87,6 +88,17 @@ function diffPdfToSnapshot({
   }
 
   tmpFile.removeCallback();
+
+  if (updateSnapshot) {
+    const snapshotFd = fs.openSync(snapshotPath, 'w');
+    fs.writeSync(snapshotFd, pdfBuffer);
+
+    return {
+      pass: true,
+      updated: true,
+      added: false,
+    };
+  }
 
   return {
     pass: true,
